@@ -3,7 +3,7 @@ const Router = express.Router;
 const { adminModel } = require("./../db")
 
 const adminRouter = Router();
-// adminRouter.use(adminMiddleware);
+//adminRouter.use(adminMiddleware);
 
 adminRouter.get("/login", (req, res)=>{
     res.json({
