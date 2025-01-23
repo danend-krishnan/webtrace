@@ -11,8 +11,16 @@ adminRouter.get("/login", (req, res)=>{
     })
 })
 
-adminRouter.post("/register", (req, res)=>{
-    
+adminRouter.post("/register", async(req, res)=>{
+    const email = req.body.email;
+    const password = req.body.password;
+    await adminModel.create({ 
+        email: email,
+        password: password
+    })
+    res.json({
+        msg: "ADMIN REG SUCCESS"
+    })
 })
 
 module.exports = {
