@@ -4,6 +4,7 @@ const { adminModel } = require("./../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const {adminMiddleware} = require("./../middlewares/adminMiddleware");
+const {loginAndSearch} = require("./../test")
 // const insta = require("instagram-web-api")
 
 const credentials = {
@@ -59,13 +60,14 @@ adminRouter.post("/register", async(req, res)=>{
 })
 
 
-adminRouter.get("/monitoring", async(req, res)=>{
+adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
     const instaid = req.body.instaid;
     console.log(instaid);
     // res.json({
     //     msg:instaid
     // })
-    searchAccount(instaid);
+    // searchAccount(instaid);
+    loginAndSearch();
 })
 
 
