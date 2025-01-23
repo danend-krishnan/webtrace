@@ -14,14 +14,16 @@ adminRouter.get("/login", (req, res)=>{
 adminRouter.post("/register", async(req, res)=>{
     const email = req.body.email;
     const password = req.body.password;
+    try{
     await adminModel.create({ 
         email: email,
         password: password
-    })
+    })}catch(e){} //Rabitholes
     res.json({
         msg: "ADMIN REG SUCCESS"
     })
 })
+
 
 module.exports = {
     adminRouter: adminRouter
