@@ -4,7 +4,7 @@ const { adminModel } = require("./../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const {adminMiddleware} = require("./../middlewares/adminMiddleware");
-const insta = require("instagram-web-api")
+// const insta = require("instagram-web-api")
 
 const credentials = {
     username: "Webtrace_og",
@@ -69,18 +69,18 @@ adminRouter.get("/monitoring", async(req, res)=>{
 })
 
 
-async function searchAccount(username) {
-    const client = new insta(credentials);
-    try {
-        await client.login();
-        const user = await client.getUserByUsername({ 
-            username: username
-         });
-        console.log("User Details:", user);
-    } catch (error) {
-        console.error("An error occurred:", error.message);
-    }
-}
+// async function searchAccount(username) {
+//     const client = new insta(credentials);
+//     try {
+//         await client.login();
+//         const user = await client.getUserByUsername({ 
+//             username: username
+//          });
+//         console.log("User Details:", user);
+//     } catch (error) {
+//         console.error("An error occurred:", error.message);
+//     }
+// }
 
 module.exports = {
     adminRouter: adminRouter
