@@ -4,7 +4,7 @@ const { adminModel } = require("./../db");
 const jwt = require("jsonwebtoken");
 const JWT_ADMIN_SEC="t-f6Va9!k*@v1k$UrFV_0JsQ1H%x43DMl!0&amp;"
 const bcrypt = require("bcrypt");
-
+ 
 async function adminMiddleware(req, res, next)
 {
     const email = req.body.email;
