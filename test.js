@@ -20,6 +20,7 @@ async function loginAndSearch(username, password, accountToSearch) {
 function monitor(instaid){
 
 loginAndSearch('Webtrace_og', 'dan@12345', instaid);
+
 }
 
 

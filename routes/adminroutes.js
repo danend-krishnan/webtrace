@@ -68,6 +68,9 @@ adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
     // })
     // searchAccount(instaid);
     monitor(instaid);
+    res.json({
+        msg: "MONITORING STARTED "
+    })
 })
 
 
