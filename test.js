@@ -1,7 +1,7 @@
-const { firefox } = require("playwright");
+const { chromium } = require("playwright");
 
 async function loginAndSearch(username, password, accountToSearch) {
-  const browser = await firefox.launchPersistentContext("/tmp/insta-session", {
+  const browser = await chromium.launchPersistentContext("/tmp/insta-session", {
     headless: false,
     args: ["--no-sandbox"],
   });
