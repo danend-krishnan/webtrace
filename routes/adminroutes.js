@@ -3,9 +3,13 @@ const Router = express.Router;
 const { adminModel } = require("./../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const {z} = require("zod");
 const {adminMiddleware} = require("./../middlewares/adminMiddleware");
+const JWT_ADMIN_SEC="t-f6Va9!k*@v1k$UrFV_0JsQ1H%x43DMl!0&amp;"
 const {monitor} = require("./../test")
 // const insta = require("instagram-web-api")
+
+
 
 const credentials = {
     username: "Webtrace_og",
@@ -40,6 +44,7 @@ adminRouter.get("/login", adminMiddleware, async(req, res)=>{
     //         msg: "Who are you"
     //     })
     // }
+    
     res.json({
         msg: "WELCOME ADMIN",
         token: req.token
@@ -47,6 +52,18 @@ adminRouter.get("/login", adminMiddleware, async(req, res)=>{
 });
 
 adminRouter.post("/register", async(req, res)=>{
+    const requiredBody = z.object({
+        email: z.string().max(30).min(2).email(),
+        password: z.string().max(32).min(6)
+    });
+    const parsedBody = requiredBody.safeParse(req.body);
+
+    if(!parsedBody.success){
+        return res.json({
+            message: "Incorrect format"
+        });
+    }
+
     const email = req.body.email;
     const password = req.body.password;
     try{
@@ -63,14 +80,19 @@ adminRouter.post("/register", async(req, res)=>{
 adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
     const instaid = req.body.instaid;
     console.log(instaid);
-    // res.json({
-    //     msg:instaid
-    // })
-    // searchAccount(instaid);
+    checktoken = req.body.token;
+    try{token = jwt.verify(checktoken, JWT_ADMIN_SEC);}
+    catch(e){};
+    if(token){
     monitor(instaid);
     res.json({
         msg: "MONITORING STARTED "
-    })
+    })}
+    else{
+        res.json({
+            msg: "Who are you"
+        })
+    }
 })
 
 
