@@ -1,4 +1,5 @@
 const { chromium } = require("playwright");
+const {algo} = require("./algo")
 
 async function loginAndSearch(username, password, accountToSearch) {
   const browser = await chromium.launchPersistentContext("/tmp/insta-session", {
@@ -79,8 +80,16 @@ async function loginAndSearch(username, password, accountToSearch) {
 
 function monitor(instaid) {
   loginAndSearch("Webtrace_og", "dan@12345", instaid);
+  algo();
 }
+
+
+// function allWords(allWords){
+//   const scrapped = allWords;
+//   console.log(allWords);
+// }
 
 module.exports = {
   monitor: monitor,
+  loginAndSearch: loginAndSearch
 };
