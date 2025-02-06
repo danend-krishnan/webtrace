@@ -1,5 +1,6 @@
 const { chromium } = require("playwright");
-const {algo} = require("./algo")
+const { algo } = require("./algo");
+const fs = require('fs');
 
 async function loginAndSearch(username, password, accountToSearch) {
   const browser = await chromium.launchPersistentContext("/tmp/insta-session", {
@@ -8,7 +9,6 @@ async function loginAndSearch(username, password, accountToSearch) {
   });
 
   const page = browser.pages()[0] || (await browser.newPage());
-//ummm login try
   try {
     await page.goto("https://www.instagram.com/accounts/login/");
     await page.waitForSelector('input[name="username"]', { timeout: 20000 });
@@ -18,13 +18,11 @@ async function loginAndSearch(username, password, accountToSearch) {
     await page.waitForNavigation({ timeout: 30000 });
     console.log("Logged in!");
 
-    // nasty profile
     await page.goto(`https://www.instagram.com/${accountToSearch}/`);
     await page.waitForSelector("h1", { timeout: 20000 });
     const profileName = await page.$eval("h1", (el) => el.innerText);
     console.log("Profile Name:", profileName);
 
-    //scrolling nasty posts
     console.log("Scrolling to load posts...");
     let scrolling = true;
     while (scrolling) {
@@ -35,12 +33,11 @@ async function loginAndSearch(username, password, accountToSearch) {
       if (oldHeight === newHeight) scrolling = false;
     }
 
-    // nasty url retrival...hehe jzt being Script Kiddie here
     console.log("Extracting post URLs...");
     const posts = await page.$$eval("article a", (links) =>
       links
         .map((link) => link.href)
-        .filter((href) => href.includes("/p/")) //umm gotta filter nasty post url
+        .filter((href) => href.includes("/p/"))
     );
     console.log("Filtered post URLs:", posts);
 
@@ -50,27 +47,37 @@ async function loginAndSearch(username, password, accountToSearch) {
       return;
     }
 
-    // Extract nasty captions from nasty posts
     const allWords = [];
     for (const post of posts) {
       console.log("Opening post:", post);
       await page.goto(post);
 
       try {
+      
         const caption = await page.$eval(
           "article div > div > div > div > span",
-          (el) => el.innerText
+          (el) => el ? el.innerText : ''
         );
+
         if (caption) {
           console.log("Caption found:", caption);
           allWords.push(...caption.split(" "));
         }
       } catch (err) {
-        console.log("No caption found or selector issue:", err.message);
+        console.log("Error extracting caption:", err.message);
       }
     }
 
-    console.log("All Captions Words:", allWords);
+    console.log("All Captions Words:", profileName);
+
+    // NASTY SCAPPING 
+    if (profileName) {
+      fs.writeFileSync('scrapp'+accountToSearch+'.txt ', profileName.concat(' '), 'utf8');
+      console.log('Words saved to scrapp.txt');
+    } else {
+      console.log('No words to write to file.');
+    }
+
     await browser.close();
   } catch (err) {
     console.error("Error during process:", err.message);
@@ -82,12 +89,6 @@ function monitor(instaid) {
   loginAndSearch("Webtrace_og", "dan@12345", instaid);
   algo();
 }
-
-
-// function allWords(allWords){
-//   const scrapped = allWords;
-//   console.log(allWords);
-// }
 
 module.exports = {
   monitor: monitor,
