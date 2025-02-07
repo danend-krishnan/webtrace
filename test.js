@@ -1,6 +1,6 @@
 const { chromium } = require("playwright");
 const { algo } = require("./algo");
-const fs = require('fs');
+const fs = require('fs')
 
 async function loginAndSearch(username, password, accountToSearch) {
   const browser = await chromium.launchPersistentContext("/tmp/insta-session", {
