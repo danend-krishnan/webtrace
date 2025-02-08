@@ -8,6 +8,8 @@ async function loginAndSearch(username, password, accountToSearch) {
     args: ["--no-sandbox"],
   });
 
+  console.log("")
+
   const page = browser.pages()[0] || (await browser.newPage());
   try {
     await page.goto("https://www.instagram.com/accounts/login/");
@@ -32,6 +34,7 @@ async function loginAndSearch(username, password, accountToSearch) {
       let newHeight = await page.evaluate(() => document.body.scrollHeight);
       if (oldHeight === newHeight) scrolling = false;
     }
+    
 
     console.log("Extracting post URLs...");
     const posts = await page.$$eval("article a", (links) =>
