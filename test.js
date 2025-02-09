@@ -1,6 +1,7 @@
 const { chromium } = require("playwright");
 const { algo } = require("./algo");
 const fs = require('fs')
+const {compareFiles} = require("./algo")
 
 async function loginAndSearch(username, password, accountToSearch) {
   const browser = await chromium.launchPersistentContext("/tmp/insta-session", {
@@ -77,6 +78,7 @@ async function loginAndSearch(username, password, accountToSearch) {
     if (profileName) {
       fs.writeFileSync('scrapp'+accountToSearch+'.txt ', profileName.concat(' '), 'utf8');
       console.log('Words saved to scrapp.txt');
+      nastychecks(accountToSearch);
     } else {
       console.log('No words to write to file.');
     }
@@ -85,13 +87,24 @@ async function loginAndSearch(username, password, accountToSearch) {
   } catch (err) {
     console.error("Error during process:", err.message);
     await browser.close();
+    
   }
+  async function nastychecks(accountToSearch){
+    const filevalue = "scrapp"+accountToSearch+".txt";
+    const file1 = '/home/krish/webtrace/'+filevalue;
+    file2 = "/keywords.txt"
+    for(i=0;i<1;i++){ //jzt for namesake loop
+    await compareFiles(file1, file2)
+  }
+}
 }
 
 function monitor(instaid) {
   loginAndSearch("Webtrace_og", "dan@12345", instaid);
-  algo();
 }
+
+
+
 
 module.exports = {
   monitor: monitor,
