@@ -76,7 +76,7 @@ async function loginAndSearch(username, password, accountToSearch) {
 
     // NASTY SCAPPING 
     if (profileName) {
-      fs.writeFileSync('scrapp'+accountToSearch+'.txt ', profileName.concat(' '), 'utf8');
+      await fs.writeFileSync('scrapp'+accountToSearch+'.txt', profileName.concat(' '), 'utf8');
       console.log('Words saved to scrapp.txt');
       nastychecks(accountToSearch);
     } else {
@@ -90,9 +90,9 @@ async function loginAndSearch(username, password, accountToSearch) {
     
   }
   async function nastychecks(accountToSearch){
-    // const filevalue = "scrapp"+accountToSearch+".txt";
-    // const file1 = '/home/krish/webtrace/'+filevalue;
-    // file2 = "/keywords.txt"
+    const filevalue = "scrapp"+accountToSearch+".txt";
+    const file1 = filevalue;
+    file2 = "keywords.txt"
     for(i=0;i<1;i++){ //jzt for namesake loop
     await compareFiles(file1, file2)
   }
