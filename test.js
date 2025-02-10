@@ -90,9 +90,9 @@ async function loginAndSearch(username, password, accountToSearch) {
     
   }
   async function nastychecks(accountToSearch){
-    const filevalue = "scrapp"+accountToSearch+".txt";
-    const file1 = '/home/krish/webtrace/'+filevalue;
-    file2 = "/keywords.txt"
+    // const filevalue = "scrapp"+accountToSearch+".txt";
+    // const file1 = '/home/krish/webtrace/'+filevalue;
+    // file2 = "/keywords.txt"
     for(i=0;i<1;i++){ //jzt for namesake loop
     await compareFiles(file1, file2)
   }
