@@ -104,8 +104,6 @@ function monitor(instaid) {
 }
 
 
-
-
 module.exports = {
   monitor: monitor,
   loginAndSearch: loginAndSearch
