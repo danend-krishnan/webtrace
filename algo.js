@@ -49,58 +49,126 @@
 // };
 
 //TF-IDF IMPLEMENTATION
+// const fs = require('fs');
+// const natural = require('natural'); // Install using npm install natural
+
+// // Function to compute TF-IDF vectors
+// function computeTFIDF(textArray) {
+//   const tfidf = new natural.TfIdf();
+//   textArray.forEach((text) => tfidf.addDocument(text));
+//   return tfidf;
+// }
+
+// // Function to compute cosine similarity between two texts
+// function cosineSimilarity(tfidf, index1, index2) {
+//   const vector1 = tfidf.documents[index1];
+//   const vector2 = tfidf.documents[index2];
+
+//   let dotProduct = 0, normA = 0, normB = 0;
+//   Object.keys(vector1).forEach((key) => {
+//     dotProduct += (vector1[key] || 0) * (vector2[key] || 0);
+//     normA += (vector1[key] || 0) ** 2;
+//     normB += (vector2[key] || 0) ** 2;
+//   });
+
+//   normA = Math.sqrt(normA);
+//   normB = Math.sqrt(normB);
+
+//   return normA && normB ? dotProduct / (normA * normB) : 0;
+// }
+
+// // Function to compare scraped text with hate speech dataset
+// async function compareFiles(file1, file2) {
+//   try {
+//     console.log("Reading files for comparison...");
+
+//     const text1 = fs.readFileSync(file1, 'utf8').toLowerCase();
+//     const text2 = fs.readFileSync(file2, 'utf8').toLowerCase();
+
+//     const tfidf = computeTFIDF([text1, text2]);
+//     const similarity = cosineSimilarity(tfidf, 0, 1);
+
+//     console.log(`Cosine Similarity Score: ${similarity.toFixed(4)}`);
+
+//     const threshold = 0.5; // Adjust threshold based on testing
+//     if (similarity > threshold) {
+//       console.log("Hate Speech Detected!");
+//     } else {
+//       console.log("No Hate Speech Detected.");
+//     }
+//   } catch (error) {
+//     console.error("Error during file comparison:", error.message);
+//   }
+// }
+
+// module.exports = { compareFiles };
+
+const tf = require('@tensorflow/tfjs');
+const use = require('@tensorflow-models/universal-sentence-encoder');
 const fs = require('fs');
-const natural = require('natural'); // Install using npm install natural
+const cosineSimilarity = require('compute-cosine-similarity');
 
-// Function to compute TF-IDF vectors
-function computeTFIDF(textArray) {
-  const tfidf = new natural.TfIdf();
-  textArray.forEach((text) => tfidf.addDocument(text));
-  return tfidf;
+let useModel;
+
+// Load Universal Sentence Encoder (USE) Model
+async function loadUSEModel() {
+    useModel = await use.load();
+    console.log("Universal Sentence Encoder model loaded!");
 }
+loadUSEModel();
 
-// Function to compute cosine similarity between two texts
-function cosineSimilarity(tfidf, index1, index2) {
-  const vector1 = tfidf.documents[index1];
-  const vector2 = tfidf.documents[index2];
-
-  let dotProduct = 0, normA = 0, normB = 0;
-  Object.keys(vector1).forEach((key) => {
-    dotProduct += (vector1[key] || 0) * (vector2[key] || 0);
-    normA += (vector1[key] || 0) ** 2;
-    normB += (vector2[key] || 0) ** 2;
-  });
-
-  normA = Math.sqrt(normA);
-  normB = Math.sqrt(normB);
-
-  return normA && normB ? dotProduct / (normA * normB) : 0;
-}
-
-// Function to compare scraped text with hate speech dataset
-async function compareFiles(file1, file2) {
-  try {
-    console.log("Reading files for comparison...");
-
-    const text1 = fs.readFileSync(file1, 'utf8').toLowerCase();
-    const text2 = fs.readFileSync(file2, 'utf8').toLowerCase();
-
-    const tfidf = computeTFIDF([text1, text2]);
-    const similarity = cosineSimilarity(tfidf, 0, 1);
-
-    console.log(`Cosine Similarity Score: ${similarity.toFixed(4)}`);
-
-    const threshold = 0.5; // Adjust threshold based on testing
-    if (similarity > threshold) {
-      console.log("Hate Speech Detected!");
-    } else {
-      console.log("No Hate Speech Detected.");
+// Function to encode text using USE
+async function encodeText(text) {
+    if (!useModel) {
+        console.log("USE model is not loaded yet!");
+        return null;
     }
-  } catch (error) {
-    console.error("Error during file comparison:", error.message);
-  }
+    const embeddings = await useModel.embed([text]);
+    return embeddings.arraySync()[0]; // Convert tensor to array
 }
 
-module.exports = { compareFiles };
+// Function to detect hate speech using sentence embeddings
+async function detectHateSpeech(text) {
+    const embeddings = await encodeText(text);
+    if (!embeddings) return "Model not ready";
+
+    // Placeholder logic for hate speech detection
+    const threshold = 0.5;
+    const prediction = 0.8; // Simulated probability
+     return prediction > threshold ? "Hate Speech Detected" : "No Hate Speech";
+    // if(prediction>threshold){
+    //   return "nasty hate speech detected"
+    // }
+}
+
+
+// Function to compare files using sentence embeddings & cosine similarity
+async function compareFiles(file1, file2) {
+    try {
+        const text1 = fs.readFileSync(file1, 'utf8').toLowerCase();
+        const text2 = fs.readFileSync(file2, 'utf8').toLowerCase();
+
+        const embeddings1 = await encodeText(text1);
+        const embeddings2 = await encodeText(text2);
+
+        if (!embeddings1 || !embeddings2) {
+            console.error("Error: Model not ready");
+            return;
+        }
+
+        const similarity = cosineSimilarity(embeddings1, embeddings2);
+        console.log(`Cosine Similarity: ${similarity}`);
+
+        const hateSpeechResult = await detectHateSpeech(text1);
+        console.log(`Hate Speech Analysis: ${hateSpeechResult}`);
+
+        return { similarity, hateSpeechResult };
+    } catch (error) {
+        console.error("Error comparing files:", error);
+    }
+}
+
+module.exports = { compareFiles, detectHateSpeech };
+
 
 
