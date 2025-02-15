@@ -112,6 +112,9 @@
 const { chromium } = require("playwright");
 const fs = require('fs');
 const { compareFiles } = require("./algo");
+const {postretrival} = require('./algo')
+
+let posturlval;
 
 async function loginAndSearch(username, password, accountToSearch) {
     const browser = await chromium.launchPersistentContext("/tmp/insta-session", {
@@ -156,10 +159,11 @@ async function loginAndSearch(username, password, accountToSearch) {
         }
 
         const allWords = [];
+        posturlval = posts[0];
         for (const post of posts) {
             console.log("Opening post:", post);
             await page.goto(post);
-
+            
             try {
                 const caption = await page.$eval(
                     "article div > div > div > div > span",
@@ -174,7 +178,7 @@ async function loginAndSearch(username, password, accountToSearch) {
                 console.log("Error extracting caption:", err.message);
             }
         }
-
+        
         console.log("All Captions Words:", profileName);
 
         if (profileName) {
@@ -196,8 +200,10 @@ async function loginAndSearch(username, password, accountToSearch) {
 async function nastychecks(accountToSearch) {
     const file1 = `scrapp${accountToSearch}.txt`;
     const file2 = "keywords.txt";
-
+    console.log(posturlval)
+    await postretrival(posturlval);
     await compareFiles(file1, file2);
+    
 }
 
 function monitor(instaid) {

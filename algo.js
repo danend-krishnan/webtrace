@@ -1,17 +1,19 @@
-// //PENDING FOR THE DEV, HE/SHE SHOULD TOUCH IT...!
-// const fs = require('fs');
-// const compareStrings = require('compare-strings');
 
+const fs = require('fs');
+const compareStrings = require('compare-strings');
+const {reportHateSpeech} = require('./reportId');
+const {sendDM} = require('./reportId')
+let posturl;
 
-// async function readFileContent(filePath, callback) {
-//     await fs.readFile(filePath, 'utf8', (err, data) => {
-//         if (err) {
-//             console.error('Error reading file:', err);
-//             return;
-//         }
-//         callback(data);
-//     });
-// }
+async function readFileContent(filePath, callback) {
+    await fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file:', err);
+            return;
+        }
+        callback(data);
+    });
+}
 
 // async function compareFiles(file1, file2) {
 //     console.log("reached here")
@@ -105,10 +107,10 @@
 
 const tf = require('@tensorflow/tfjs');
 const use = require('@tensorflow-models/universal-sentence-encoder');
-const fs = require('fs');
+
 const cosineSimilarity = require('compute-cosine-similarity');
 
-let useModel;
+
 
 // Load Universal Sentence Encoder (USE) Model
 async function loadUSEModel() {
@@ -128,19 +130,61 @@ async function encodeText(text) {
 }
 
 // Function to detect hate speech using sentence embeddings
-async function detectHateSpeech(text) {
+async function detectHateSpeech(text, file1, file2 ) {
     const embeddings = await encodeText(text);
     if (!embeddings) return "Model not ready";
-
+    async function compareFiless(file1, file2) {
+        // console.log("reached here")
+        await readFileContent(file1, (file1Content) => {
+            // console.log("reaached here 1")
+             readFileContent(file2, (file2Content) => { //UMM AWAIT NEEDED HERE
+                // console.log(typeof(file1Content))
+                // console.log()
+                // console.log(typeof(file2Content))
+                // console.log(file2Content)
+                // console.log(file1Content === file2Content)
+                // if (file1Content.toLowerCase() === file2Content.toLowerCase()) {
+                //     console.log('Match found!');
+                // } else {
+                //     console.log('No match!');
+                // }
+                const result = compareStrings(file1Content,file2Content);
+                let value = 0
+                if(result==1){
+                    value = 10;
+                }else if(result>=0.5){
+                    value=5;
+                }else{
+                    value=0;
+                }
+           
+            
+        
     // Placeholder logic for hate speech detection
-    const threshold = 0.5;
-    const prediction = 0.8; // Simulated probability
-     return prediction > threshold ? "Hate Speech Detected" : "No Hate Speech";
-    // if(prediction>threshold){
-    //   return "nasty hate speech detected"
-    // }
+    const threshold = 0.3;
+    
+    const prediction = value; // Simulated probability
+    //  return prediction < threshold ? "Hate Speech Detected" : "No Hate Speech";
+    if(prediction>threshold){
+      console.log("Hate Speech Detected : Hate Speech")
+      const message = "Your post contains hate speech, kindly remove it"
+      console.log(posturl)
+      if(posturl){
+        sendDM("Webtraceog","thumbio7", message, "Webtraceog", "dan@12345")
+       reportHateSpeech(posturl, "Webtrace_og", "dan@12345")}
+    //sendDM("Webtraceog","thumbio7", message, "Webtraceog", "dan@12345")
+    }else{
+        console.log("Hate Speech Detected : No Hate Speech")
+    }
+});
+});
+}compareFiless(file1, file2)
 }
-
+function postretrival(post){
+    console.log(post+"post called but nothing")
+    posturl = post;
+    // console.log(posturl);
+}
 
 // Function to compare files using sentence embeddings & cosine similarity
 async function compareFiles(file1, file2) {
@@ -159,8 +203,8 @@ async function compareFiles(file1, file2) {
         const similarity = cosineSimilarity(embeddings1, embeddings2);
         console.log(`Cosine Similarity: ${similarity}`);
 
-        const hateSpeechResult = await detectHateSpeech(text1);
-        console.log(`Hate Speech Analysis: ${hateSpeechResult}`);
+        const hateSpeechResult = await detectHateSpeech(text1, file1, file2);
+        // console.log(`Hate Speech Analysis: ${hateSpeechResult}`);
 
         return { similarity, hateSpeechResult };
     } catch (error) {
@@ -168,7 +212,7 @@ async function compareFiles(file1, file2) {
     }
 }
 
-module.exports = { compareFiles, detectHateSpeech };
+module.exports = { compareFiles, detectHateSpeech, postretrival };
 
 
 
