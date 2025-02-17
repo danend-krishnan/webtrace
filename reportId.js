@@ -21,6 +21,9 @@ async function reportHateSpeech(instaPostUrl, username, password) {
     // Attempt to click the "More options" button (three dots)
     // Using XPath for more precision
     const menuButton = await page.locator('xpath=//button[@aria-label="More options"]');
+    
+    console.log("REPORT HAS BEEN INITIATED TO INSTAGRAM")
+    await browser.close();
     await menuButton.click();
     console.log("Clicked the 'More options' button");
 

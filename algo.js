@@ -170,8 +170,8 @@ async function detectHateSpeech(text, file1, file2 ) {
       const message = "Your post contains hate speech, kindly remove it"
       console.log(posturl)
       if(posturl){
-        sendDM("Webtraceog","thumbio7", message, "Webtraceog", "dan@12345")
-       reportHateSpeech(posturl, "Webtrace_og", "dan@12345")}
+        sendDM("webtrace_og","thumbio7", message, "webtrace_og", "dan@12345")
+       reportHateSpeech(posturl, "webtrace_og", "dan@12345")}
     //sendDM("Webtraceog","thumbio7", message, "Webtraceog", "dan@12345")
     }else{
         console.log("Hate Speech Detected : No Hate Speech")
