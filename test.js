@@ -159,11 +159,11 @@ async function loginAndSearch(username, password, accountToSearch) {
         }
 
         const allWords = [];
-        posturlval = posts[0];
+        
         for (const post of posts) {
             console.log("Opening post:", post);
             await page.goto(post);
-            
+            posturlval = post;
             try {
                 const caption = await page.$eval(
                     "article div > div > div > div > span",

@@ -1,9 +1,15 @@
+//const frontend = require('prajan')
 
-const fs = require('fs');
+const fs = require("fs-extra");
+const axios = require('axios');
 const compareStrings = require('compare-strings');
 const {reportHateSpeech} = require('./reportId');
+const path = require('path'); 
 const {sendDM} = require('./reportId')
+const { chromium } = require("playwright");
 let posturl;
+const Tesseract = require("tesseract.js");
+
 
 async function readFileContent(filePath, callback) {
     await fs.readFile(filePath, 'utf8', (err, data) => {
@@ -169,9 +175,11 @@ async function detectHateSpeech(text, file1, file2 ) {
       console.log("Hate Speech Detected : Hate Speech")
       const message = "Your post contains hate speech, kindly remove it"
       console.log(posturl)
-      if(posturl){
+        if(posturl){ 
+        downloadInstagramImages(posturl)
         sendDM("webtrace_og","thumbio7", message, "webtrace_og", "dan@12345")
-       reportHateSpeech(posturl, "webtrace_og", "dan@12345")}
+       reportHateSpeech(posturl, "webtrace_og", "dan@12345")
+       }
     //sendDM("Webtraceog","thumbio7", message, "Webtraceog", "dan@12345")
     }else{
         console.log("Hate Speech Detected : No Hate Speech")
@@ -211,6 +219,111 @@ async function compareFiles(file1, file2) {
         console.error("Error comparing files:", error);
     }
 }
+
+
+//NASTY CODE FOR DONWLOADING SHITS
+
+    async function downloadInstagramImages(profileUrl) {
+        const browser = await chromium.launch({ headless: false });
+        const page = await browser.newPage();
+
+        try {
+            await page.goto(profileUrl, { waitUntil: 'networkidle' });
+            await page.waitForTimeout(7000); // Wait for images to load
+
+            // Extract image URLs
+            const imageUrls = await page.evaluate(() => {
+                return Array.from(document.querySelectorAll('img')).map(img => img.src);
+            });
+
+            console.log(`Found ${imageUrls.length} images`);
+
+            // Create 'images' folder if not exists
+            if (!fs.existsSync('images')) {
+                fs.mkdirSync('images');
+            }
+
+            // Function to download images using axios
+            const downloadImage = async (url, filename) => {
+                try {
+                    const response = await axios({
+                        url,
+                        responseType: 'arraybuffer',
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0' // Mimic browser to bypass restrictions
+                        }
+                    });
+                    fs.writeFileSync(path.join(__dirname, 'images', filename), response.data);
+                    console.log(`Downloaded ${filename}`);
+                } catch (error) {
+                    console.error(`Failed to download ${filename}:`, error.message);
+                }
+            };
+
+            // Download each image
+            for (let i = 0; i < imageUrls.length; i++) {
+                const filename = `image_${i}.jpg`;
+                console.log(`Downloading ${filename}...`);
+                await downloadImage(imageUrls[i], filename);
+            }
+
+            console.log('Download complete!');
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            await browser.close();
+        }
+        await extractTextFromImages("./images","./output/text_results.txt")
+    }
+
+        
+
+    async function extractTextFromImages(folderPath, outputFile) {
+        try {
+            console.log("CHECKING OCR MODEL...");
+    
+            // Ensure the folder exists
+            if (!(await fs.pathExists(folderPath))) {
+                console.error(`Error: Folder "${folderPath}" does not exist.`);
+                return;
+            }
+    
+            const files = await fs.promises.readdir(folderPath);
+            console.log(`Found ${files.length} files in folder.`);
+    
+            const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif|bmp)$/i.test(file));
+            console.log(`Filtered ${imageFiles.length} image files.`);
+    
+            if (imageFiles.length === 0) {
+                console.error("No image files found in the folder.");
+                return;
+            }
+    
+            let results = [];
+    
+            for (const file of imageFiles) {
+                const imagePath = path.join(folderPath, file);
+                console.log(`Processing: ${imagePath}`);
+    
+                try {
+                    const { data: { text } } = await Tesseract.recognize(imagePath, "eng");
+                    results.push(`File: ${file}\n${text}\n\n`);
+                    console.log(`Extracted text from ${file}`);
+                } catch (ocrError) {
+                    console.error(`OCR failed for ${file}:`, ocrError);
+                }
+            }
+    
+            // Ensure output directory exists before writing
+            await fs.ensureDir(path.dirname(outputFile));
+    
+            await fs.writeFile(outputFile, results.join("\n"));
+            console.log(`Text extracted and saved to: ${outputFile}`);
+        } catch (error) {
+            console.error("Unexpected error:", error);
+        }
+    }
+    
 
 module.exports = { compareFiles, detectHateSpeech, postretrival };
 
