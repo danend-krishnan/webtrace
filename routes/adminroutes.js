@@ -85,12 +85,14 @@ adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
     catch(e){};
     if(token){
     const value = await monitor(instaid);
+    console.log(value)
         if (value){
     res.json({
         msg: "MONITORING STARTED ",
         words: value[0],
-        postulr:value[1]
-    })}}
+        postulr: value[1]
+    });
+}}
     else{
         res.json({
             msg: "Who are you"

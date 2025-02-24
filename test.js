@@ -210,7 +210,7 @@ async function nastychecks(accountToSearch) {
 }
  function monitor(instaid) {
     const value = loginAndSearch("Webtrace_og", "dan@12345", instaid);
-    return [value[0], value[1]];
+    return value;
 }
 
 module.exports = { monitor, loginAndSearch };
