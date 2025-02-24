@@ -125,6 +125,13 @@ async function loginAndSearch(username, password, accountToSearch) {
 
     const page = browser.pages()[0] || (await browser.newContext());
     try {
+        // await page.clearCookies();
+        // await page.clearCookies({ name: 'session-id' });
+        // await page.clearCookies({ domain: 'my-origin.com' });
+        // await page.clearCookies({ domain: /.*my-origin\.com/ });
+        // await page.clearCookies({ path: '/api/v1' });
+        // await page.clearCookies({ name: 'session-id', domain: 'my-origin.com' });
+        await page.context().clearCookies();
         await page.goto("https://www.instagram.com/accounts/login/");
         await page.waitForSelector('input[name="username"]', { timeout: 20000 });
         await page.type('input[name="username"]', username);
@@ -133,7 +140,8 @@ async function loginAndSearch(username, password, accountToSearch) {
         await page.waitForNavigation({ timeout: 30000 });
         console.log("Logged in!");
 
-        await page.goto(`https://www.instagram.com/${accountToSearch}/`);
+        //await page.goto(`https://www.instagram.com/${accountToSearch}/`);
+        await page.goto(`https://www.instagram.com/thumbio7/p/DGNDj7Tyb8a/`);
         await page.waitForSelector("h1", { timeout: 20000 });
         const profileName = await page.$eval("h1", (el) => el.innerText);
         console.log("Profile Name:", profileName);

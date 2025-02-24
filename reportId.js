@@ -1,10 +1,11 @@
+const { Context } = require('natural');
 const { chromium } = require('playwright');
 
 async function reportHateSpeech(instaPostUrl, username, password) {
     console.log("Reached here with post URL: " + instaPostUrl);
 
     const browser = await chromium.launch({ headless: false }); // Set headless: true for background operation
-    const page = await browser.newPage();
+    const page = await page.newPage();
 
     // Log in to Instagram
     await page.goto('https://www.instagram.com/accounts/login/');
