@@ -115,8 +115,9 @@ const tf = require('@tensorflow/tfjs');
 const use = require('@tensorflow-models/universal-sentence-encoder');
 
 const cosineSimilarity = require('compute-cosine-similarity');
+const { profile } = require("console");
 
-
+let responsevalue;
 
 // Load Universal Sentence Encoder (USE) Model
 async function loadUSEModel() {
@@ -173,6 +174,7 @@ async function detectHateSpeech(text, file1, file2 ) {
     //  return prediction < threshold ? "Hate Speech Detected" : "No Hate Speech";
     if(prediction>threshold){
       console.log("Hate Speech Detected : Hate Speech")
+      
       const message = "Your post contains hate speech, kindly remove it"
       console.log(posturl)
         if(posturl){ 
@@ -324,8 +326,11 @@ async function compareFiles(file1, file2) {
         }
     }
     
+    // async function responsecall(profileName){
+    //     responsevalue = profileName;
+    // }
 
-module.exports = { compareFiles, detectHateSpeech, postretrival };
+module.exports = { compareFiles, detectHateSpeech, postretrival}
 
 
 

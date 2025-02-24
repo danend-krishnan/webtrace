@@ -113,6 +113,7 @@ const { chromium } = require("playwright");
 const fs = require('fs');
 const { compareFiles } = require("./algo");
 const {postretrival} = require('./algo')
+const {responsecall}= require('./routes/adminroutes')
 
 let posturlval;
 
@@ -180,6 +181,7 @@ async function loginAndSearch(username, password, accountToSearch) {
         }
         
         console.log("All Captions Words:", profileName);
+        // await responsecall(profileName);
 
         if (profileName) {
             const filePath = `scrapp${accountToSearch}.txt`;
@@ -189,8 +191,9 @@ async function loginAndSearch(username, password, accountToSearch) {
         } else {
             console.log('No words to write to file.');
         }
-
+        
         await browser.close();
+        return profileName;
     } catch (err) {
         console.error("Error during process:", err.message);
         await browser.close();
@@ -205,9 +208,9 @@ async function nastychecks(accountToSearch) {
     await compareFiles(file1, file2);
     
 }
-
-function monitor(instaid) {
-    loginAndSearch("Webtrace_og", "dan@12345", instaid);
+ function monitor(instaid) {
+    const value = loginAndSearch("Webtrace_og", "dan@12345", instaid);
+    return value;
 }
 
 module.exports = { monitor, loginAndSearch };

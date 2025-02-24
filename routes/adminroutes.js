@@ -10,8 +10,7 @@ const {monitor} = require("./../test")
 
 // const insta = require("instagram-web-api")
 
-
-
+let responsevalue;
 const credentials = {
     username: "Webtrace_og",
     password: "dan@1234"
@@ -85,17 +84,22 @@ adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
     try{token = jwt.verify(checktoken, JWT_ADMIN_SEC);}
     catch(e){};
     if(token){
-    monitor(instaid);
+    const value = await monitor(instaid);
+        if (value){
     res.json({
-        msg: "MONITORING STARTED "
-    })}
+        msg: "MONITORING STARTED ",
+        words: value
+    })}}
     else{
         res.json({
             msg: "Who are you"
         })
     }
 })
-
+   async function responsecall(profileName){
+        responsevalue = profileName;
+        return responsevalue;
+    }
 
 // async function searchAccount(username) {
 //     const client = new insta(credentials);
@@ -111,5 +115,5 @@ adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
 // }
 
 module.exports = {
-    adminRouter: adminRouter
+    adminRouter, responsecall
 }
