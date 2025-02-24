@@ -193,7 +193,7 @@ async function loginAndSearch(username, password, accountToSearch) {
         }
         
         await browser.close();
-        return profileName;
+        return [profileName, posturlval];
     } catch (err) {
         console.error("Error during process:", err.message);
         await browser.close();
@@ -210,7 +210,7 @@ async function nastychecks(accountToSearch) {
 }
  function monitor(instaid) {
     const value = loginAndSearch("Webtrace_og", "dan@12345", instaid);
-    return value;
+    return [value[0], value[1]];
 }
 
 module.exports = { monitor, loginAndSearch };

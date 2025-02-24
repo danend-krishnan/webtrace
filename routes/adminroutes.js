@@ -88,7 +88,8 @@ adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
         if (value){
     res.json({
         msg: "MONITORING STARTED ",
-        words: value
+        words: value[0],
+        postulr:value[1]
     })}}
     else{
         res.json({
