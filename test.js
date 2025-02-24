@@ -123,7 +123,7 @@ async function loginAndSearch(username, password, accountToSearch) {
         args: ["--no-sandbox"],
     });
 
-    const page = browser.pages()[0] || (await browser.newPage());
+    const page = browser.pages()[0] || (await browser.newContext());
     try {
         await page.goto("https://www.instagram.com/accounts/login/");
         await page.waitForSelector('input[name="username"]', { timeout: 20000 });
