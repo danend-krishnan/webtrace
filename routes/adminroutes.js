@@ -20,30 +20,30 @@ const credentials = {
 const adminRouter = Router();
 //adminRouter.use(adminMiddleware);
 
-adminRouter.get("/login", adminMiddleware, async(req, res)=>{
-    // const email = req.body.email;
-    // const password = req.body.password;
-    // let admin = await adminModel.findOne({
-    //     email: email
-    // })
-    // if(!admin){
-    //     res.json({
-    //         msg: "WHO ARE YOU"
-    //     })
-    // }
-    // const passwordcheck = bcrypt.compare(password, admin.password);
-    // if(passwordcheck){
-    //     const token = jwt.sign({
-    //         id: admin._id
-    //     }, JWT_ADMIN_SEC);
-    // res.json({
-    //     msg: "admin logged in",
-    //     token: token
-    // })}else{
-    //     res.status(403).json({
-    //         msg: "Who are you"
-    //     })
-    // }
+adminRouter.post("/login", async(req, res)=>{
+    const email = req.body.email;
+    const password = req.body.password;
+    let admin = await adminModel.findOne({
+        email: email
+    })
+    if(!admin){
+        return res.json({
+            msg: "WHO ARE YOU"
+        })
+    }
+    const passwordcheck = bcrypt.compare(password, admin.password);
+    if(passwordcheck){
+        const token = jwt.sign({
+            id: admin._id
+        }, JWT_ADMIN_SEC);
+    res.json({
+        msg: "admin logged in",
+        token: token
+    })}else{
+        res.status(403).json({
+            msg: "Who are you"
+        })
+    }
     
     res.json({
         msg: "WELCOME ADMIN",
@@ -77,7 +77,7 @@ adminRouter.post("/register", async(req, res)=>{
 })
 
 
-adminRouter.get("/monitoring", adminMiddleware, async(req, res)=>{
+adminRouter.post("/monitoring", adminMiddleware, async(req, res)=>{
     const instaid = req.body.instaid;
     console.log(instaid);
     checktoken = req.body.token;

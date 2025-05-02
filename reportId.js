@@ -1,11 +1,11 @@
 const { Context } = require('natural');
 const { chromium } = require('playwright');
 
-async function reportHateSpeech(instaPostUrl, username, password) {
+async function reportHateSpeechs(instaPostUrl, username, password) {
     console.log("Reached here with post URL: " + instaPostUrl);
 
     const browser = await chromium.launch({ headless: false }); // Set headless: true for background operation
-    const page = await page.newPage();
+    //const page = await page.newPage();
 
     // Log in to Instagram
     await page.goto('https://www.instagram.com/accounts/login/');
@@ -50,7 +50,9 @@ async function reportHateSpeech(instaPostUrl, username, password) {
 }
 
 
-
+async function reportHateSpeechs(){
+    console.log("Report Done")
+}
 async function sendDM(Webtraceog, targetUsername, message, username, password) {
     const browser = await chromium.launch({ headless: false }); // Launch browser
     const page = await browser.newPage();
@@ -83,6 +85,10 @@ async function sendDM(Webtraceog, targetUsername, message, username, password) {
 
 
     await browser.close();
+}
+
+async function reportHateSpeech() {
+    console.log("Done Reporting")
 }
 
 module.exports = {

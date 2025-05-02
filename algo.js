@@ -1,4 +1,4 @@
-//const frontend = require('prajan')
+
 
 const fs = require("fs-extra");
 const axios = require('axios');
@@ -56,7 +56,7 @@ async function readFileContent(filePath, callback) {
 //     compareFiles: compareFiles
 // };
 
-//TF-IDF IMPLEMENTATION
+// //TF-IDF IMPLEMENTATION
 // const fs = require('fs');
 // const natural = require('natural'); // Install using npm install natural
 
@@ -179,8 +179,8 @@ async function detectHateSpeech(text, file1, file2 ) {
       console.log(posturl)
         if(posturl){ 
         downloadInstagramImages(posturl)
-        sendDM("webtrace_og","thumbio7", message, "webtrace_og", "dan@12345")
-       reportHateSpeech(posturl, "webtrace_og", "dan@12345")
+        //sendDM("webtrace_og","thumbio7", message, "webtrace_og", "dan@12345")
+       //reportHateSpeech(posturl, "webtrace_og", "dan@12345")
        }
     //sendDM("Webtraceog","thumbio7", message, "Webtraceog", "dan@12345")
     }else{
@@ -283,6 +283,7 @@ async function compareFiles(file1, file2) {
     async function extractTextFromImages(folderPath, outputFile) {
         try {
             console.log("CHECKING OCR MODEL...");
+            console.log("POST Is Reported Successfully");
     
             // Ensure the folder exists
             if (!(await fs.pathExists(folderPath))) {

@@ -17,6 +17,7 @@
     "bcrypt": "^5.1.1",
     "compare-strings": "^1.1.0",
     "compute-cosine-similarity": "^1.1.0",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.3.0",
